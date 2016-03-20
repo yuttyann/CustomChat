@@ -1,0 +1,29 @@
+#CustomChat Config
+#BukkitVersion 1.7.2～1.8.x
+#ColorCodeList http://ess.khhq.net/mc/
+
+#チャットの設定
+#ChatGroupsの設定方法 
+#ChatGroups:
+#  (グループ名): <チャットメッセージ>
+#%player プレイヤー名
+#%chat プレイヤーのチャット
+#%jp ローマ字の日本語化
+#カラーコードは上のColorCodeListを参照してください
+#設定は追加できます
+ChatGroups:
+  Admin: '&4[Admin]&b%player: &f%chat &7(%jp)'
+  Default: '<%player> %chat'
+
+#プレイヤーの設定
+#NormalPlayers設定方法
+#NormalPlayers: <グループ名>
+NormalPlayers: Default
+
+#Players設定方法
+#Players:
+#  (プレイヤー名):
+#    Group: <グループ名> 
+Players:
+  testplayer:
+    Group: Admin

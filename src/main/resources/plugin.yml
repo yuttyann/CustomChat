@@ -1,0 +1,6 @@
+name: CustomChat
+main: com.github.yuttyann.customchat.Main
+version: 1.1
+author: yuttyann44581
+commands:
+  cc:

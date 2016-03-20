@@ -1,6 +1,13 @@
 #CustomChat Config
-#BukkitVersion 1.7.2～1.8.x
+#BukkitVersion 1.7.2～1.9
 #ColorCodeList http://ess.khhq.net/mc/
+
+#バージョンチェック、ダウンロード
+#このプラグインが最新バージョンかチェックします。
+#メッセージはOPにしか表示されません。
+# trueで有効 falseで無効
+UpdateChecker: true
+AutoDownload: true
 
 #チャットの設定
 #ChatGroupsの設定方法 

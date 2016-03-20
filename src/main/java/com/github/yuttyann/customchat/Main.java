@@ -10,7 +10,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.github.yuttyann.customchat.command.CCCommand;
+import com.github.yuttyann.customchat.command.CustomChatCommand;
+import com.github.yuttyann.customchat.config.CustomChatConfig;
 import com.github.yuttyann.customchat.listener.ChatListener;
 
 public class Main extends JavaPlugin implements Listener {
@@ -19,9 +20,9 @@ public class Main extends JavaPlugin implements Listener {
 	private HashMap<String, CommandExecutor> commands;
 
 	public void onEnable() {
+		setUpConfig();
 		loadClass();
 		loadCommand();
-		saveDefaultConfig();
 		PluginDescriptionFile yml = getDescription();
 		this.logger.info("[" + yml.getName() + "] v" + yml.getVersion() + " が有効になりました");
 	}
@@ -32,12 +33,25 @@ public class Main extends JavaPlugin implements Listener {
 	}
 
 	private void loadClass() {
-		new ChatListener(this);
+		getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+		getServer().getPluginManager().registerEvents(new Updater(this), this);
+	}
+
+	private void setUpConfig() {
+		if ((PlatformUtils.isLinux()) || (PlatformUtils.isMac())) {
+			new CustomChatConfig(this, "utf-8");
+		} else if (PlatformUtils.isWindows()) {
+			if(Version.isVersion("1.9")) {
+				new CustomChatConfig(this, "utf-8");
+			} else {
+				new CustomChatConfig(this, "s-jis");
+			}
+		}
 	}
 
 	private void loadCommand() {
 		commands = new HashMap<String, CommandExecutor>();
-		commands.put("cc", new CCCommand(this));
+		commands.put("customchat", new CustomChatCommand(this));
 	}
 
 	@Override

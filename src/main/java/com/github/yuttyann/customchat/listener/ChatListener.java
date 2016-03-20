@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.github.yuttyann.customchat.Main;
+import com.github.yuttyann.customchat.config.CustomChatConfig;
 import com.github.yuttyann.customchat.converter.KanaConverter;
 
 public class ChatListener implements Listener {
@@ -21,7 +22,6 @@ public class ChatListener implements Listener {
 
 	public ChatListener(Main plugin) {
 		this.plugin = plugin;
-		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -31,26 +31,26 @@ public class ChatListener implements Listener {
 		String message = event.getMessage();
 		String jp = message.replaceAll(URL, "");
 		if (!matcher.find(0)) {
-			if (plugin.getConfig().isSet("Players." + event.getPlayer().getName())) {
-				String Group = plugin.getConfig().getString("Players." + player.getName() + ".Group");
-				String Chat = plugin.getConfig().getString("ChatGroups." + Group);
+			if (CustomChatConfig.isSet("Players." + event.getPlayer().getName())) {
+				String Group = CustomChatConfig.getString("Players." + player.getName() + ".Group");
+				String Chat = CustomChatConfig.getString("ChatGroups." + Group);
 				Chat = replace(Chat, message, jp, player, true);
 				event.setFormat(Chat);
 			} else {
-				String Group = plugin.getConfig().getString("NormalPlayers");
-				String Chat = plugin.getConfig().getString("ChatGroups." + Group);
+				String Group = CustomChatConfig.getString("NormalPlayers");
+				String Chat = CustomChatConfig.getString("ChatGroups." + Group);
 				Chat = replace(Chat, message, jp, player, true);
 				event.setFormat(Chat);
 			}
 		} else {
 			if (plugin.getConfig().isSet("Players." + event.getPlayer().getName())) {
-				String Group = plugin.getConfig().getString("Players." + player.getName() + ".Group");
-				String Chat = plugin.getConfig().getString("ChatGroups." + Group);
+				String Group = CustomChatConfig.getString("Players." + player.getName() + ".Group");
+				String Chat = CustomChatConfig.getString("ChatGroups." + Group);
 				Chat = replace(Chat, message, jp, player, false);
 				event.setFormat(Chat);
 			} else {
-				String Group = plugin.getConfig().getString("NormalPlayers");
-				String Chat = plugin.getConfig().getString("ChatGroups." + Group);
+				String Group = CustomChatConfig.getString("NormalPlayers");
+				String Chat = CustomChatConfig.getString("ChatGroups." + Group);
 				Chat = replace(Chat, message, jp, player, false);
 				event.setFormat(Chat);
 			}

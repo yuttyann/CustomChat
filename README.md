@@ -1,10 +1,10 @@
-# CustomChat v1.1
+# CustomChat v1.2
 このプラグインはyuttyann44581によって作成されています。  
 チャットを簡単にカスタムできるプラグインです。  
 ライセンス: LGPLv3  
 
 # Commands
-/cc reload  
+/customchat reload  
 
 # Permissions
-cc.reload  
+customchat.reload  

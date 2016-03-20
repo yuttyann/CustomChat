@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public enum Permission {
-	CC_RELOAD("cc.reload");
+	CUSTOMCHAT_RELOAD("customchat.reload");
 
 	private String node;
 

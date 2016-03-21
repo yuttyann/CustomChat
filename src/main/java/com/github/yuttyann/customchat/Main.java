@@ -32,9 +32,9 @@ public class Main extends JavaPlugin implements Listener {
 		this.logger.info("[" + yml.getName() + "] v" + yml.getVersion() + " が無効になりました");
 	}
 
-	private void loadClass() {
-		getServer().getPluginManager().registerEvents(new ChatListener(this), this);
-		getServer().getPluginManager().registerEvents(new Updater(this), this);
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		return commands.get(command.getName()).onCommand(sender, command, label, args);
 	}
 
 	private void setUpConfig() {
@@ -49,13 +49,13 @@ public class Main extends JavaPlugin implements Listener {
 		}
 	}
 
+	private void loadClass() {
+		getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+		getServer().getPluginManager().registerEvents(new Updater(this), this);
+	}
+
 	private void loadCommand() {
 		commands = new HashMap<String, CommandExecutor>();
 		commands.put("customchat", new CustomChatCommand(this));
-	}
-
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		return commands.get(command.getName()).onCommand(sender, command, label, args);
 	}
 }

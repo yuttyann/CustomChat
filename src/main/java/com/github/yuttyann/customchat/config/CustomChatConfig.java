@@ -19,7 +19,8 @@ import com.github.yuttyann.customchat.Main;
 
 public class CustomChatConfig {
 
-	private static Main plugin;
+	static Main plugin;
+
 	private static String encode;
 	private static File configFile;
 	private static YamlConfiguration config;

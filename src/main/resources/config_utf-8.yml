@@ -24,8 +24,7 @@ NGword:
   MessageType: send
   NGMessage: '&cNGワードが含まれています'
 
-#チャットの設定
-#ChatGroupsの設定方法 
+#チャットグループの設定 
 #ChatGroups:
 #  (グループ名): <チャットメッセージ>
 #&で色を指定できます。ColorCodeListのURL参照
@@ -37,12 +36,11 @@ ChatGroups:
   Admin: '&4[Admin]&b%player: &f%chat &7(%jp)'
   Default: '<%player> %chat'
 
-#NormalPlayersの設定
-#NormalPlayers設定方法
+#通常プレイヤーの設定
 #NormalPlayers: <グループ名>
 NormalPlayers: Default
 
-#Players設定方法
+#指定したプレイヤーの設定
 #Players:
 #  (プレイヤーID):
 #    Group: <グループ名> 

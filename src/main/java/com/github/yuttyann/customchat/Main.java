@@ -12,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.yuttyann.customchat.command.CustomChatCommand;
 import com.github.yuttyann.customchat.config.CustomChatConfig;
+import com.github.yuttyann.customchat.config.CustomChatNGword;
 import com.github.yuttyann.customchat.listener.ChatListener;
 
 public class Main extends JavaPlugin implements Listener {
@@ -40,11 +41,14 @@ public class Main extends JavaPlugin implements Listener {
 	private void setUpConfig() {
 		if ((PlatformUtils.isLinux()) || (PlatformUtils.isMac())) {
 			new CustomChatConfig(this, "utf-8");
+			new CustomChatNGword(this, "utf-8");
 		} else if (PlatformUtils.isWindows()) {
 			if(Version.isVersion("1.9")) {
 				new CustomChatConfig(this, "utf-8");
+				new CustomChatNGword(this, "utf-8");
 			} else {
 				new CustomChatConfig(this, "s-jis");
+				new CustomChatNGword(this, "s-jis");
 			}
 		}
 	}

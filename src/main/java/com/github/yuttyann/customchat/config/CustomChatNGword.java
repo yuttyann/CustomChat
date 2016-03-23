@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 
 import com.github.yuttyann.customchat.Main;
 
-public class CustomChatConfig {
+public class CustomChatNGword {
 
 	static Main plugin;
 
@@ -25,14 +25,14 @@ public class CustomChatConfig {
 	private static File configFile;
 	private static YamlConfiguration config;
 
-	public CustomChatConfig(Main plugin, String encode) {
-		CustomChatConfig.plugin = plugin;
-		CustomChatConfig.filename = "config_" + encode + ".yml";
-		CustomChatConfig.configFile = new File(plugin.getDataFolder(), filename);
-		if (!CustomChatConfig.configFile.exists()) {
+	public CustomChatNGword(Main plugin, String encode) {
+		CustomChatNGword.plugin = plugin;
+		CustomChatNGword.filename = "ngword_" + encode + ".yml";
+		CustomChatNGword.configFile = new File(plugin.getDataFolder(), filename);
+		if (!CustomChatNGword.configFile.exists()) {
 			plugin.saveResource(filename, false);
 		}
-		CustomChatConfig.config = YamlConfiguration.loadConfiguration(configFile);
+		CustomChatNGword.config = YamlConfiguration.loadConfiguration(configFile);
 	}
 
 	public static YamlConfiguration getConfig() {
@@ -40,7 +40,7 @@ public class CustomChatConfig {
 	}
 
 	public static void reloadConfig() {
-		if (!CustomChatConfig.configFile.exists()) {
+		if (!CustomChatNGword.configFile.exists()) {
 			plugin.saveResource(filename, false);
 		}
 		config = YamlConfiguration.loadConfiguration(configFile);

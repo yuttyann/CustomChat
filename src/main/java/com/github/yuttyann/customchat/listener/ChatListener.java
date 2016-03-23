@@ -3,6 +3,7 @@ package com.github.yuttyann.customchat.listener;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -11,6 +12,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import com.github.yuttyann.customchat.Main;
 import com.github.yuttyann.customchat.config.CustomChatConfig;
+import com.github.yuttyann.customchat.config.CustomChatNGword;
 import com.github.yuttyann.customchat.converter.KanaConverter;
 
 public class ChatListener implements Listener {
@@ -26,9 +28,13 @@ public class ChatListener implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
-		Matcher matcher = pattern.matcher(event.getMessage());
 		Player player = event.getPlayer();
 		String message = event.getMessage();
+		if(isNGword(player, message)) {
+			event.setCancelled(true);
+			return;
+		}
+		Matcher matcher = pattern.matcher(message);
 		String jp = message.replaceAll(URL, "");
 		if (!matcher.find(0)) {
 			if (CustomChatConfig.isSet("Players." + event.getPlayer().getName())) {
@@ -43,7 +49,7 @@ public class ChatListener implements Listener {
 				event.setFormat(Chat);
 			}
 		} else {
-			if (plugin.getConfig().isSet("Players." + event.getPlayer().getName())) {
+			if (CustomChatConfig.isSet("Players." + event.getPlayer().getName())) {
 				String Group = CustomChatConfig.getString("Players." + player.getName() + ".Group");
 				String Chat = CustomChatConfig.getString("ChatGroups." + Group);
 				Chat = replace(Chat, message, jp, player, false);
@@ -59,17 +65,46 @@ public class ChatListener implements Listener {
 
 	private String replace(String chat, String message, String jp, Player player, boolean japanize) {
 		if(japanize) {
-			chat = chat.replaceAll("&", "§");
-			chat = chat.replaceAll("%player", player.getName());
-			chat = chat.replaceAll("%chat", message);
-			chat = chat.replaceAll("%jp", KanaConverter.conv(jp));
+			chat = chat.replace("%player", player.getName());
+			chat = chat.replace("%chat", message);
+			chat = chat.replace("%jp", KanaConverter.conv(jp));
+			chat = chat.replace("&", "§");
 			return chat;
 		} else {
-			chat = chat.replaceAll("&", "§");
-			chat = chat.replaceAll("%player", player.getName());
-			chat = chat.replaceAll("%chat", message);
-			chat = chat.replaceAll("%jp", "");
+			chat = chat.replace("%player", player.getName());
+			chat = chat.replace("%chat", message);
+			chat = chat.replace("%jp", "");
+			chat = chat.replace("&", "§");
 			return chat;
 		}
+	}
+
+	private static boolean isNGword(Player player, String message) {
+		if(!CustomChatConfig.getBoolean("NGword.Enable")) {
+			return false;
+		}
+		for(String exception : CustomChatNGword.getStringList("Exception")) {
+			for(String ngword : CustomChatNGword.getStringList("NGword")) {
+				if(message.contains(ngword) && !message.contains(exception)) {
+					String type = CustomChatConfig.getString("NGword.MessageType");
+					String ngmessage = CustomChatConfig.getString("NGword.NGMessage");
+					ngmessage = ngmessage.replace("%player", player.getName());
+					ngmessage = ngmessage.replace("%message", message);
+					ngmessage = ngmessage.replace("&", "§");
+					switch (type) {
+					case "broadcast":
+						Bukkit.broadcastMessage(ngmessage);
+						break;
+					case "send":
+						player.sendMessage(ngmessage);
+						break;
+					default:
+						break;
+					}
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

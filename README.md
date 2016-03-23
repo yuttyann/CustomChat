@@ -1,4 +1,4 @@
-# CustomChat v1.2
+# CustomChat v1.3
 このプラグインはyuttyann44581によって作成されています。  
 チャットを簡単にカスタムできるプラグインです。  
 ライセンス: LGPLv3  

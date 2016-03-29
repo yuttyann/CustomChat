@@ -12,11 +12,11 @@ import com.github.yuttyann.customchat.config.CustomChatNGword;
 
 public class CustomChatCommand implements CommandExecutor {
 
-    Main plugin;
+	Main plugin;
 
-    public CustomChatCommand(Main plugin) {
-    	this.plugin = plugin;
-    }
+	public CustomChatCommand(Main plugin) {
+		this.plugin = plugin;
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

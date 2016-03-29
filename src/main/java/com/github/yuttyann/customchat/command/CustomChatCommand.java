@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import com.github.yuttyann.customchat.Main;
 import com.github.yuttyann.customchat.Permission;
 import com.github.yuttyann.customchat.config.CustomChatConfig;
+import com.github.yuttyann.customchat.config.CustomChatNGword;
 
 public class CustomChatCommand implements CommandExecutor {
 
@@ -19,7 +20,7 @@ public class CustomChatCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!Permission.hasPermission(Permission.CUSTOMCHAT_RELOAD, sender)) {
+		if (!Permission.has(Permission.CUSTOMCHAT_RELOAD, sender)) {
 			sender.sendMessage(ChatColor.RED + "権限がありません");
 			return true;
 		}
@@ -30,6 +31,7 @@ public class CustomChatCommand implements CommandExecutor {
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("reload")) {
 				CustomChatConfig.reloadConfig();
+				CustomChatNGword.reloadConfig();
 				sender.sendMessage(ChatColor.GREEN + "Configのリロードが完了しました");
 				return true;
 			}

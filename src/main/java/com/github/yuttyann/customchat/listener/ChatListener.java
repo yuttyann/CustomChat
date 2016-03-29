@@ -83,26 +83,29 @@ public class ChatListener implements Listener {
 		if(!CustomChatConfig.getBoolean("NGword.Enable")) {
 			return false;
 		}
-		for(String exception : CustomChatNGword.getStringList("Exception")) {
-			for(String ngword : CustomChatNGword.getStringList("NGword")) {
-				if(message.contains(ngword) && !message.contains(exception)) {
-					String type = CustomChatConfig.getString("NGword.MessageType");
-					String ngmessage = CustomChatConfig.getString("NGword.NGMessage");
-					ngmessage = ngmessage.replace("%player", player.getName());
-					ngmessage = ngmessage.replace("%message", message);
-					ngmessage = ngmessage.replace("&", "§");
-					switch (type) {
-					case "broadcast":
-						Bukkit.broadcastMessage(ngmessage);
-						break;
-					case "send":
-						player.sendMessage(ngmessage);
-						break;
-					default:
-						break;
-					}
-					return true;
+		for(String ngword : CustomChatNGword.getStringList("NGword")) {
+			for(String exception : CustomChatNGword.getStringList("Exception")) {
+				if(message.contains(exception)) {
+					return false;
 				}
+			}
+			if(message.contains(ngword)) {
+				String type = CustomChatConfig.getString("NGword.MessageType");
+				String ngmessage = CustomChatConfig.getString("NGword.NGMessage");
+				ngmessage = ngmessage.replace("%player", player.getName());
+				ngmessage = ngmessage.replace("%message", message);
+				ngmessage = ngmessage.replace("&", "§");
+				switch (type) {
+				case "broadcast":
+					Bukkit.broadcastMessage(ngmessage);
+					break;
+				case "send":
+					player.sendMessage(ngmessage);
+					break;
+				default:
+					break;
+				}
+				return true;
 			}
 		}
 		return false;

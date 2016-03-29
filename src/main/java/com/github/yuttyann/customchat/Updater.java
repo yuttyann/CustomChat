@@ -85,7 +85,7 @@ public class Updater implements Listener {
 
 	private void updateCheck() {
 		if(CustomChatConfig.getBoolean("UpdateChecker")) {
-			if((!getVersion().equals(getCurrentVersion())) && (Double.valueOf(getVersion()) > Double.valueOf(getCurrentVersion()))) {
+			if((!getVersion().equals(getCurrentVersion())) && (Double.parseDouble(getVersion()) > Double.parseDouble(getCurrentVersion()))) {
 				enable = true;
 				if(CustomChatConfig.getBoolean("AutoDownload")) {
 					download();

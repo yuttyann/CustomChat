@@ -10,6 +10,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import ru.tehkode.permissions.bukkit.PermissionsEx;
+
 import com.github.yuttyann.customchat.Main;
 import com.github.yuttyann.customchat.config.CustomChatConfig;
 import com.github.yuttyann.customchat.config.CustomChatNGword;
@@ -64,22 +66,21 @@ public class ChatListener implements Listener {
 	}
 
 	private String replace(String chat, String message, String jp, Player player, boolean japanize) {
+		chat = chat.replace("%prefix", getPrefix(player));
+		chat = chat.replace("%suffix", getSuffix(player));
+		chat = chat.replace("%player", player.getName());
+		chat = chat.replace("%world", player.getWorld().getName());
+		chat = chat.replace("%message", message);
 		if(japanize) {
-			chat = chat.replace("%player", player.getName());
-			chat = chat.replace("%chat", message);
-			chat = chat.replace("%jp", KanaConverter.conv(jp));
-			chat = chat.replace("&", "§");
-			return chat;
+			chat = chat.replace("%japanize", KanaConverter.conv(jp));
 		} else {
-			chat = chat.replace("%player", player.getName());
-			chat = chat.replace("%chat", message);
-			chat = chat.replace("%jp", "");
-			chat = chat.replace("&", "§");
-			return chat;
+			chat = chat.replace("%japanize", "");
 		}
+		chat = chat.replace("&", "§");
+		return chat;
 	}
 
-	private static boolean isNGword(Player player, String message) {
+	private boolean isNGword(Player player, String message) {
 		if(!CustomChatConfig.getBoolean("NGword.Enable")) {
 			return false;
 		}
@@ -92,7 +93,10 @@ public class ChatListener implements Listener {
 			if(message.contains(ngword)) {
 				String type = CustomChatConfig.getString("NGword.MessageType");
 				String ngmessage = CustomChatConfig.getString("NGword.NGMessage");
+				ngmessage = ngmessage.replace("%prefix", getPrefix(player));
+				ngmessage = ngmessage.replace("%suffix", getSuffix(player));
 				ngmessage = ngmessage.replace("%player", player.getName());
+				ngmessage = ngmessage.replace("%world", player.getWorld().getName());
 				ngmessage = ngmessage.replace("%message", message);
 				ngmessage = ngmessage.replace("&", "§");
 				switch (type) {
@@ -109,5 +113,39 @@ public class ChatListener implements Listener {
 			}
 		}
 		return false;
+	}
+
+	private String getPrefix(Player player) {
+		if(isPermissionsEx() == null) {
+			return "";
+		} else if (isPermissionsEx()) {
+			String prefix = PermissionsEx.getUser(player).getGroups()[0].getPrefix();
+			if(prefix != null) {
+				return prefix;
+			} else {
+				return "";
+			}
+		} else {
+			return "";
+		}
+	}
+
+	private String getSuffix(Player player) {
+		if(isPermissionsEx() == null) {
+			return "";
+		} else if (isPermissionsEx()) {
+			String suffix = PermissionsEx.getUser(player).getGroups()[0].getSuffix();
+			if(suffix != null) {
+				return suffix;
+			} else {
+				return "";
+			}
+		} else {
+			return "";
+		}
+	}
+
+	private Boolean isPermissionsEx() {
+		return plugin.permissionsex;
 	}
 }

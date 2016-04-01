@@ -17,11 +17,13 @@ import com.github.yuttyann.customchat.listener.ChatListener;
 
 public class Main extends JavaPlugin implements Listener {
 
+	public Boolean permissionsex = null;
 	private Logger logger = Logger.getLogger("Minecraft");
 	private HashMap<String, CommandExecutor> commands;
 
 	public void onEnable() {
 		setUpConfig();
+		loadPermissionsEx();
 		loadClass();
 		loadCommand();
 		PluginDescriptionFile yml = getDescription();
@@ -50,6 +52,14 @@ public class Main extends JavaPlugin implements Listener {
 				new CustomChatConfig(this, "s-jis");
 				new CustomChatNGword(this, "s-jis");
 			}
+		}
+	}
+
+	private void loadPermissionsEx() {
+		if (getServer().getPluginManager().isPluginEnabled("PermissionsEx")) {
+			permissionsex = true;
+		} else {
+			permissionsex = false;
 		}
 	}
 

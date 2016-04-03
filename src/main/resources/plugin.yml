@@ -1,0 +1,9 @@
+name: CustomChat
+main: com.github.yuttyann.customchat.Main
+version: 1.4
+author: yuttyann44581
+website: http://ch.nicovideo.jp/yuttyann44581/blomaga/ar810622
+softdepend: [Vault, PermissionsEx]
+
+commands:
+  customchat:

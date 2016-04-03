@@ -165,7 +165,7 @@ public class ChatListener implements Listener {
 		} else if (pm.isPluginEnabled("PermissionsEx")) {
 			PermissionUser user = PermissionsEx.getPermissionManager().getUser(player);
 			if (user != null) {
-				suffix = user.getPrefix();
+				suffix = user.getSuffix();
 				if (suffix != null) {
 					return suffix;
 				}

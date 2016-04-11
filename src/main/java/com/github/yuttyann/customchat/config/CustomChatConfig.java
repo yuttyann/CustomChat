@@ -40,7 +40,7 @@ public class CustomChatConfig {
 	}
 
 	public static void reloadConfig() {
-		if (!CustomChatConfig.configFile.exists()) {
+		if (!configFile.exists()) {
 			plugin.saveResource(filename, false);
 		}
 		config = YamlConfiguration.loadConfiguration(configFile);

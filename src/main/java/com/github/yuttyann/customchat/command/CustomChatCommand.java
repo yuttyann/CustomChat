@@ -21,21 +21,19 @@ public class CustomChatCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!Permission.has(Permission.CUSTOMCHAT_RELOAD, sender)) {
-			sender.sendMessage(ChatColor.RED + "権限がありません");
-			return true;
-		}
-		if (args.length == 0) {
-			sender.sendMessage(ChatColor.GOLD + "Commnad:" + ChatColor.YELLOW + " /customchat reload");
+			sender.sendMessage(ChatColor.RED + "パーミッションが無いため、実行できません。");
 			return true;
 		}
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("reload")) {
 				CustomChatConfig.reloadConfig();
 				CustomChatNGword.reloadConfig();
-				sender.sendMessage(ChatColor.GREEN + "Configのリロードが完了しました");
+				sender.sendMessage(ChatColor.GREEN + "Configの再読み込みが完了しました。");
 				return true;
 			}
 		}
-		return false;
+		sender.sendMessage(ChatColor.LIGHT_PURPLE + "=== CustomChat Commands ===");
+		sender.sendMessage(ChatColor.AQUA + "/customchat reload - Configの再読み込みをします。");
+		return true;
 	}
 }

@@ -25,12 +25,12 @@ public class Main extends JavaPlugin implements Listener {
 		loadClass();
 		loadCommand();
 		PluginDescriptionFile yml = getDescription();
-		this.logger.info("[" + yml.getName() + "] v" + yml.getVersion() + " が有効になりました");
+		this.logger.info("[" + yml.getName() + "] v" + yml.getVersion() + " が有効になりました。");
 	}
 
 	public void onDisable() {
 		PluginDescriptionFile yml = getDescription();
-		this.logger.info("[" + yml.getName() + "] v" + yml.getVersion() + " が無効になりました");
+		this.logger.info("[" + yml.getName() + "] v" + yml.getVersion() + " が無効になりました。");
 	}
 
 	@Override

@@ -40,7 +40,7 @@ public class CustomChatNGword {
 	}
 
 	public static void reloadConfig() {
-		if (!CustomChatNGword.configFile.exists()) {
+		if (!configFile.exists()) {
 			plugin.saveResource(filename, false);
 		}
 		config = YamlConfiguration.loadConfiguration(configFile);

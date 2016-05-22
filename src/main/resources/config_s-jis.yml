@@ -1,5 +1,5 @@
-#CustomChat Config
-#BukkitVersion 1.7.2～1.9
+#CustomChat v1.6 Config
+#CompliantVersion 1.7.2～1.9.4
 #ColorCodeList http://ess.khhq.net/mc/
 
 #バージョンチェック、ダウンロード
@@ -8,6 +8,12 @@
 # trueで有効 falseで無効
 UpdateChecker: true
 AutoDownload: true
+
+#チャットに使用するカラーコードの設定
+# trueで有効 falseで無効
+ChatColorCode:
+  Enable: true
+  ColorCode: '&'
 
 #NGワードの設定
 #NGワードはngword_s-jis.yml、ngword_utf-8.ymlで設定できます。
@@ -33,6 +39,7 @@ NGword:
 #&で色を指定できます。ColorCodeListのURL参照
 #%prefixでPermissionsExのPrefixを取得します。
 #%suffixでPermissionsExのSuffixを取得します。
+#%timeで現在の時刻を取得します。
 #%playerでプレイヤーを取得します。
 #%worldでワールドを取得します。
 #%messageでプレイヤーのチャットを取得します。

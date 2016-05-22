@@ -1,5 +1,7 @@
 package com.github.yuttyann.customchat.listener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,6 +75,7 @@ public class ChatListener implements Listener {
 	private String replace(String chat, String message, String jp, Player player, boolean japanize) {
 		chat = chat.replace("%prefix", getPrefix(player));
 		chat = chat.replace("%suffix", getSuffix(player));
+		chat = chat.replace("%time", getTime());
 		chat = chat.replace("%player", player.getName());
 		chat = chat.replace("%world", player.getWorld().getName());
 		chat = chat.replace("%message", message);
@@ -82,6 +85,9 @@ public class ChatListener implements Listener {
 			chat = chat.replace("%japanize", "");
 		}
 		chat = chat.replace("&", "§");
+		if (CustomChatConfig.getBoolean("ChatColorCode.Enable")) {
+			message = message.replace(CustomChatConfig.getString("ChatColorCode.ColorCode"), "§");
+		}
 		return chat;
 	}
 
@@ -100,6 +106,7 @@ public class ChatListener implements Listener {
 				String ngmessage = CustomChatConfig.getString("NGword.NGMessage");
 				ngmessage = ngmessage.replace("%prefix", getPrefix(player));
 				ngmessage = ngmessage.replace("%suffix", getSuffix(player));
+				ngmessage = ngmessage.replace("%time", getTime());
 				ngmessage = ngmessage.replace("%player", player.getName());
 				ngmessage = ngmessage.replace("%world", player.getWorld().getName());
 				ngmessage = ngmessage.replace("%message", message);
@@ -172,5 +179,11 @@ public class ChatListener implements Listener {
 			}
 		}
 		return suffix;
+	}
+
+	private String getTime() {
+		Date date = new Date();
+		SimpleDateFormat simpledate = new SimpleDateFormat("HH:mm:ss");
+		return simpledate.format(date);
 	}
 }

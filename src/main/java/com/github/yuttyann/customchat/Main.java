@@ -63,6 +63,9 @@ public class Main extends JavaPlugin {
 				new Config(this, "s-jis");
 				new NGword(this, "s-jis");
 			}
+		} else {
+			new Config(this, "utf-8");
+			new NGword(this, "utf-8");
 		}
 	}
 

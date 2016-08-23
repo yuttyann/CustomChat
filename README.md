@@ -5,8 +5,8 @@
 
 # Commands
 /customchat reload  
-/customchat japanize <on | off>  
+/customchat japanize (on | off)  
 
 # Permissions
-customchat.reload  
-customchat.japanize
+customchat.command.reload  
+customchat.command.japanize

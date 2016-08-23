@@ -45,6 +45,8 @@ public class PlayerData {
 			} else {
 				new PlayerData(plugin, player, "s-jis");
 			}
+		} else {
+			new PlayerData(plugin, player, "utf-8");
 		}
 	}
 

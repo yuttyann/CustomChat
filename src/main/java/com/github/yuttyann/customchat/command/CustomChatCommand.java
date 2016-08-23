@@ -27,7 +27,7 @@ public class CustomChatCommand implements TabExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("reload")) {
-				if (!Permission.has(Permission.CUSTOMCHAT_RELOAD, sender)) {
+				if (!Permission.has(Permission.CUSTOMCHAT_COMMAND_RELOAD, sender)) {
 					sender.sendMessage(ChatColor.RED + "パーミッションが無いため、実行できません。");
 					return true;
 				}
@@ -41,7 +41,7 @@ public class CustomChatCommand implements TabExecutor {
 					sender.sendMessage(ChatColor.RED + "コマンドはゲーム内から実行してください。");
 					return true;
 				}
-				if (!Permission.has(Permission.CUSTOMCHAT_JAPANIZE, sender)) {
+				if (!Permission.has(Permission.CUSTOMCHAT_COMMAND_RELOAD, sender)) {
 					sender.sendMessage(ChatColor.RED + "パーミッションが無いため、実行できません。");
 					return true;
 				}
@@ -63,7 +63,7 @@ public class CustomChatCommand implements TabExecutor {
 					sender.sendMessage(ChatColor.RED + "コマンドはゲーム内から実行してください。");
 					return true;
 				}
-				if (!Permission.has(Permission.CUSTOMCHAT_JAPANIZE, sender)) {
+				if (!Permission.has(Permission.CUSTOMCHAT_COMMAND_RELOAD, sender)) {
 					sender.sendMessage(ChatColor.RED + "パーミッションが無いため、実行できません。");
 					return true;
 				}

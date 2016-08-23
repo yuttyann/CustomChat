@@ -3,8 +3,8 @@ package com.github.yuttyann.customchat;
 import org.bukkit.command.CommandSender;
 
 public enum Permission {
-	CUSTOMCHAT_RELOAD("customchat.reload"),
-	CUSTOMCHAT_JAPANIZE("customchat.japanize");
+	CUSTOMCHAT_COMMAND_RELOAD("customchat.command.reload"),
+	CUSTOMCHAT_COMMAND_JAPANIZE("customchat.command.japanize");
 
 	private String node;
 

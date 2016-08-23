@@ -2,8 +2,6 @@ package com.github.yuttyann.customchat.listener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.milkbowl.vault.chat.Chat;
 
@@ -20,16 +18,14 @@ import ru.tehkode.permissions.PermissionUser;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import com.github.yuttyann.customchat.Main;
-import com.github.yuttyann.customchat.config.CustomChatConfig;
-import com.github.yuttyann.customchat.config.CustomChatNGword;
-import com.github.yuttyann.customchat.converter.KanaConverter;
+import com.github.yuttyann.customchat.file.Config;
+import com.github.yuttyann.customchat.file.NGword;
+import com.github.yuttyann.customchat.japanize.JapanizeManager;
+import com.github.yuttyann.customchat.util.Utils;
 
 public class ChatListener implements Listener {
 
 	Main plugin;
-
-	private String URL = "https?://[\\w/:%#\\$&\\?\\(\\)~\\.=\\+\\-]+";
-	private Pattern pattern = Pattern.compile("[^\u0020-\u007E]|\u00a7|u00a74u00a75u00a73u00a74v");
 
 	public ChatListener(Main plugin) {
 		this.plugin = plugin;
@@ -43,36 +39,38 @@ public class ChatListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		Matcher matcher = pattern.matcher(message);
-		String jp = message.replaceAll(URL, "");
-		if (!matcher.find(0)) {
-			if (CustomChatConfig.isSet("Players." + event.getPlayer().getName())) {
-				String Group = CustomChatConfig.getString("Players." + player.getName() + ".Group");
-				String Chat = CustomChatConfig.getString("ChatGroups." + Group);
-				Chat = replace(Chat, message, jp, player, true);
-				event.setFormat(Chat);
+		String group;
+		String chat;
+		String uuid = Utils.getUniqueId(player.getName()).toString();
+		if (message.getBytes().length == message.length() && !message.matches("[ \\uFF61-\\uFF9F]+")) {
+			if (Config.contains("Players." + uuid)) {
+				group = Config.getString("Players." + uuid + ".Group");
+				chat = Config.getString("ChatGroups." + group);
+				chat = replace(chat, message, player, true);
+				event.setFormat(chat);
 			} else {
-				String Group = CustomChatConfig.getString("NormalPlayers");
-				String Chat = CustomChatConfig.getString("ChatGroups." + Group);
-				Chat = replace(Chat, message, jp, player, true);
-				event.setFormat(Chat);
+				group = Config.getString("NormalPlayers");
+				chat = Config.getString("ChatGroups." + group);
+				chat = replace(chat, message, player, true);
+				event.setFormat(chat);
 			}
 		} else {
-			if (CustomChatConfig.isSet("Players." + event.getPlayer().getName())) {
-				String Group = CustomChatConfig.getString("Players." + player.getName() + ".Group");
-				String Chat = CustomChatConfig.getString("ChatGroups." + Group);
-				Chat = replace(Chat, message, jp, player, false);
-				event.setFormat(Chat);
+			if (Config.contains("Players." + uuid)) {
+				uuid = Utils.getUniqueId(player.getName()).toString();
+				group = Config.getString("Players." + uuid + ".Group");
+				chat = Config.getString("ChatGroups." + group);
+				chat = replace(chat, message, player, false);
+				event.setFormat(chat);
 			} else {
-				String Group = CustomChatConfig.getString("NormalPlayers");
-				String Chat = CustomChatConfig.getString("ChatGroups." + Group);
-				Chat = replace(Chat, message, jp, player, false);
-				event.setFormat(Chat);
+				group = Config.getString("NormalPlayers");
+				chat = Config.getString("ChatGroups." + group);
+				chat = replace(chat, message, player, false);
+				event.setFormat(chat);
 			}
 		}
 	}
 
-	private String replace(String chat, String message, String jp, Player player, boolean japanize) {
+	private String replace(String chat, String message, Player player, boolean japanize) {
 		chat = chat.replace("%prefix", getPrefix(player));
 		chat = chat.replace("%suffix", getSuffix(player));
 		chat = chat.replace("%time", getTime());
@@ -80,30 +78,30 @@ public class ChatListener implements Listener {
 		chat = chat.replace("%world", player.getWorld().getName());
 		chat = chat.replace("%message", message);
 		if(japanize) {
-			chat = chat.replace("%japanize", KanaConverter.conv(jp));
+			chat = chat.replace("%addjapanize", JapanizeManager.addJapanize(player, message));
 		} else {
-			chat = chat.replace("%japanize", "");
+			chat = chat.replace("%addjapanize", "");
 		}
 		chat = chat.replace("&", "§");
-		if (CustomChatConfig.getBoolean("ChatColorCode.Enable")) {
-			message = message.replace(CustomChatConfig.getString("ChatColorCode.ColorCode"), "§");
+		if (Config.getBoolean("ChatColorCode.Enable")) {
+			message = message.replace(Config.getString("ChatColorCode.ColorCode"), "§");
 		}
 		return chat;
 	}
 
 	private boolean isNGword(Player player, String message) {
-		if(!CustomChatConfig.getBoolean("NGword.Enable")) {
+		if(!Config.getBoolean("NGword.Enable")) {
 			return false;
 		}
-		for(String ngword : CustomChatNGword.getStringList("NGword")) {
-			for(String exception : CustomChatNGword.getStringList("Exception")) {
+		for(String ngword : NGword.getStringList("NGword")) {
+			for(String exception : NGword.getStringList("Exception")) {
 				if(message.contains(exception)) {
 					return false;
 				}
 			}
 			if(message.contains(ngword)) {
-				String type = CustomChatConfig.getString("NGword.MessageType");
-				String ngmessage = CustomChatConfig.getString("NGword.NGMessage");
+				String type = Config.getString("NGword.MessageType");
+				String ngmessage = Config.getString("NGword.NGMessage");
 				ngmessage = ngmessage.replace("%prefix", getPrefix(player));
 				ngmessage = ngmessage.replace("%suffix", getSuffix(player));
 				ngmessage = ngmessage.replace("%time", getTime());
@@ -111,15 +109,12 @@ public class ChatListener implements Listener {
 				ngmessage = ngmessage.replace("%world", player.getWorld().getName());
 				ngmessage = ngmessage.replace("%message", message);
 				ngmessage = ngmessage.replace("&", "§");
-				switch (type) {
-				case "broadcast":
+				if (type.equals("broadcast")) {
 					Bukkit.broadcastMessage(ngmessage);
-					break;
-				case "send":
+				} else if (type.equals("send")) {
 					player.sendMessage(ngmessage);
-					break;
-				default:
-					break;
+				} else {
+					player.sendMessage(ngmessage);
 				}
 				return true;
 			}
@@ -138,16 +133,16 @@ public class ChatListener implements Listener {
 			}
 			if (chat != null) {
 				prefix = chat.getPlayerPrefix(player);
-				if (prefix != null) {
-					return prefix;
+				if (prefix == null) {
+					prefix = "";
 				}
 			}
 		} else if (pm.isPluginEnabled("PermissionsEx")) {
 			PermissionUser user = PermissionsEx.getPermissionManager().getUser(player);
 			if (user != null) {
 				prefix = user.getPrefix();
-				if (prefix != null) {
-					return prefix;
+				if (prefix == null) {
+					prefix = "";
 				}
 			}
 		}
@@ -165,16 +160,16 @@ public class ChatListener implements Listener {
 			}
 			if (chat != null) {
 				suffix = chat.getPlayerSuffix(player);
-				if (suffix != null) {
-					return suffix;
+				if (suffix == null) {
+					suffix = "";
 				}
 			}
 		} else if (pm.isPluginEnabled("PermissionsEx")) {
 			PermissionUser user = PermissionsEx.getPermissionManager().getUser(player);
 			if (user != null) {
 				suffix = user.getSuffix();
-				if (suffix != null) {
-					return suffix;
+				if (suffix == null) {
+					suffix = "";
 				}
 			}
 		}

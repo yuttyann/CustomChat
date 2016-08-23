@@ -1,4 +1,4 @@
-package com.github.yuttyann.customchat.converter;
+package com.github.yuttyann.customchat.japanize;
 
 import java.util.HashMap;
 

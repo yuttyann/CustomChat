@@ -1,8 +1,9 @@
-package com.github.yuttyann.customchat.config;
+package com.github.yuttyann.customchat.file;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,48 +17,55 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import com.github.yuttyann.customchat.Main;
+import com.github.yuttyann.customchat.util.Utils;
+import com.google.common.base.Charsets;
 
-public class CustomChatNGword {
+public class Config {
 
-	static Main plugin;
+	private static Main plugin;
 
 	private static String filename;
-	private static File configFile;
+	private static File configfile;
 	private static YamlConfiguration config;
 
-	public CustomChatNGword(Main plugin, String encode) {
-		CustomChatNGword.plugin = plugin;
-		CustomChatNGword.filename = "ngword_" + encode + ".yml";
-		CustomChatNGword.configFile = new File(plugin.getDataFolder(), filename);
-		if (!CustomChatNGword.configFile.exists()) {
+	public Config(Main plugin, String encode) {
+		Config.plugin = plugin;
+		filename = "config_" + encode + ".yml";
+		configfile = new File(plugin.getDataFolder(), filename);
+		if (!configfile.exists()) {
 			plugin.saveResource(filename, false);
 		}
-		CustomChatNGword.config = YamlConfiguration.loadConfiguration(configFile);
+		config = YamlConfiguration.loadConfiguration(configfile);
+	}
+
+	@SuppressWarnings("deprecation")
+	public static void reload() {
+		config = YamlConfiguration.loadConfiguration(configfile);
+		InputStream defConfigStream = plugin.getResource(filename);
+		if (defConfigStream != null) {
+			YamlConfiguration defConfig;
+			if(Utils.isUpperVersion("1.9")) {
+				defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, Charsets.UTF_8));
+			} else {
+				defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+			}
+			config.setDefaults(defConfig);
+		}
+	}
+
+	public static File getFile() {
+		return configfile;
 	}
 
 	public static YamlConfiguration getConfig() {
 		return config;
 	}
 
-	public static void reloadConfig() {
-		if (!configFile.exists()) {
-			plugin.saveResource(filename, false);
-		}
-		config = YamlConfiguration.loadConfiguration(configFile);
-		InputStream defConfigStream = plugin.getResource(filename);
-		if (defConfigStream != null) {
-			YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-			config.setDefaults(defConfig);
-		}
-	}
-
-	public static void saveConfig() {
-		if (configFile.exists()) {
-			try {
-				config.save(configFile);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	public static void save() {
+		try {
+			config.save(configfile);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -74,7 +82,7 @@ public class CustomChatNGword {
 			config.save(file);
 		} catch (IOException e) {
 			e.printStackTrace();
-		};
+		}
 	}
 
 	public static void addDefault(String path, Object value) {

@@ -12,6 +12,7 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,79 +26,113 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-import com.github.yuttyann.customchat.config.CustomChatConfig;
+import com.github.yuttyann.customchat.file.Config;
 
 public class Updater implements Listener {
 
 	Main plugin;
 
+	private static Updater updater;
 	private ConsoleCommandSender sender;
-	private PluginDescriptionFile yml;
+	private PluginDescriptionFile pluginyml;
 	private Boolean enable;
 	private Boolean error;
-	private String currentVersion;
+	private String currentversion;
 	private String content;
-	private String pluginName;
-	private String pluginURL;
+	private String pluginname;
+	private String pluginurl;
+	private String siteurl;
 	private String version;
 
 	public Updater(Main plugin) {
 		this.plugin = plugin;
-		this.enable = false;
-		this.error = false;
-		this.yml = plugin.getDescription();
-		this.currentVersion = yml.getVersion();
-		this.pluginName = yml.getName();
-		this.sender = Bukkit.getConsoleSender();
+		updater = this;
+		enable = false;
+		error = false;
+		pluginyml = plugin.getDescription();
+		currentversion = pluginyml.getVersion();
+		pluginname = pluginyml.getName();
+		siteurl = "http://versionview.yuttyann44581.net/" + getPluginName() + "/";
+		sender = Bukkit.getConsoleSender();
 		setUp();
 		updateCheck();
-		sendCheckMessage();
+		sendCheckMessage(null, true);
 	}
 
-	private String getCurrentVersion() {
-		return currentVersion;
+	public static Updater getUpdater() {
+		return updater;
 	}
 
-	private String getContent() {
+	public Boolean getEnable() {
+		return enable;
+	}
+
+	public Boolean getError() {
+		return error;
+	}
+
+	public String getCurrentVersion() {
+		return currentversion;
+	}
+
+	public String getContent() {
 		return content;
 	}
 
-	private String getPluginName() {
-		return pluginName;
+	public String getFileName() {
+		return getPluginName() + " v" + getVersion() + ".jar";
 	}
 
-	private String getPluginURL() {
-		return pluginURL;
+	public String getPluginName() {
+		return pluginname;
 	}
 
-	private String getVersion() {
+	public String getPluginURL() {
+		return pluginurl;
+	}
+
+	public String getSiteURL() {
+		return siteurl;
+	}
+
+	public String getVersion() {
 		return version;
 	}
 
 	private void setUp() {
 		try {
-			URL url = new URL("http://versionview.yuttyann44581.net/" + getPluginName() + "/");
+			URL url = new URL(getSiteURL());
 			InputStream input = url.openConnection().getInputStream();
 			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
 			Node node = document.getElementsByTagName("p").item(0);
 			NodeList nodelist = node.getChildNodes();
 			version = nodelist.item(0).getTextContent().trim();
-			pluginURL = nodelist.item(2).getTextContent().trim();
+			pluginurl = nodelist.item(2).getTextContent().trim();
 			content = nodelist.item(4).getTextContent().trim();
 		} catch (MalformedURLException e) {
-			sender.sendMessage(ChatColor.RED + "エラーが発生しました。URLが不正または不明です(MalformedURLException)");
+			sender.sendMessage(ChatColor.RED + "URLが不正または不明です。(MalformedURLException)");
 			errorMessageTemplate();
-		} catch(Exception e) {
-			sender.sendMessage(ChatColor.RED + "エラーが発生しました。何らかのエラーが発生しました(Exception)");
+		} catch (IOException e) {
+			sender.sendMessage(ChatColor.RED + "入出力処理が失敗しました。(IOException)");
+			errorMessageTemplate();
+		} catch (ParserConfigurationException e) {
+			sender.sendMessage(ChatColor.RED + "重大な構成エラーが発生しました。(ParserConfigurationException)");
+			errorMessageTemplate();
+		} catch (SAXException e) {
+			sender.sendMessage(ChatColor.RED + "エラーが発生しました。(SAXException)");
 			errorMessageTemplate();
 		}
 	}
 
-	private void download() {
+	private void fileDownload() {
+		String filename = null;
+		File file = null;
+		InputStream input = null;
+		FileOutputStream output = null;
 		sender.sendMessage(ChatColor.LIGHT_PURPLE + "プラグインのダウンロードを開始しています...");
 		try {
-			String prefix = "[" + getPluginName() + " v"+ getVersion() + ".jar]";
 			URL url = new URL(getPluginURL());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setAllowUserInteraction(false);
@@ -108,34 +143,54 @@ public class Updater implements Listener {
 			if (httpStatusCode != HttpURLConnection.HTTP_OK) {
 				throw new Exception();
 			}
-			InputStream in = conn.getInputStream();
-			File file = new File(plugin.getDataFolder(), getPluginName() + " v"+ getVersion() + ".jar");
-			FileOutputStream out = new FileOutputStream(file, false);
+			File downloads = new File(plugin.getDataFolder(), "Downloads");
+			if (!downloads.exists()) {
+				downloads.mkdir();
+			}
+			filename = getFileName();
+			file = new File(plugin.getDataFolder(), "Downloads/" + filename);
+			input = conn.getInputStream();
+			output = new FileOutputStream(file, false);
 			byte[] b = new byte[4096];
 			int readByte = 0;
-			while (-1 != (readByte = in.read(b))) {
-				out.write(b, 0, readByte);
+			while (-1 != (readByte = input.read(b))) {
+				output.write(b, 0, readByte);
 			}
-			in.close();
-			out.close();
-			sender.sendMessage(ChatColor.GOLD + prefix + " のダウンロードが終了しました。");
-			sender.sendMessage(ChatColor.GOLD + prefix + " ファイルサイズ: " + getSize(file.length()));
-			sender.sendMessage(ChatColor.GOLD + prefix + " 保存場所: plugins/" + getPluginName() + "/" + getPluginName() + " v"+ getVersion() + ".jar");
 		} catch (FileNotFoundException e) {
-			sender.sendMessage(ChatColor.RED + "エラーが発生しました。ファイルが存在しません(FileNotFoundException)");
+			sender.sendMessage(ChatColor.RED + "ファイルが存在しません。(FileNotFoundException)");
 			errorMessageTemplate();
 		} catch (ProtocolException e) {
-			sender.sendMessage(ChatColor.RED + "エラーが発生しました。使用しているプロトコルでエラーが発生または不正です(ProtocolException)");
+			sender.sendMessage(ChatColor.RED + "使用しているプロトコルでエラーが発生または不正です。(ProtocolException)");
 			errorMessageTemplate();
 		} catch (MalformedURLException e) {
-			sender.sendMessage(ChatColor.RED + "エラーが発生しました。URLが不正または不明です(MalformedURLException)");
+			sender.sendMessage(ChatColor.RED + "URLが不正または不明です。(MalformedURLException)");
 			errorMessageTemplate();
 		} catch (IOException e) {
-			sender.sendMessage(ChatColor.RED + "エラーが発生しました。何らかの入出力処理が失敗しました(IOException)");
+			sender.sendMessage(ChatColor.RED + "入出力処理が失敗しました。(IOException)");
 			errorMessageTemplate();
 		} catch (Exception e) {
-			sender.sendMessage(ChatColor.RED + "エラーが発生しました。何らかのエラーが発生しました(Exception)");
+			sender.sendMessage(ChatColor.RED + "エラーが発生しました。(Exception)");
 			errorMessageTemplate();
+		} finally {
+			if (output != null) {
+				try {
+					output.flush();
+					output.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			String prefix = "[" + filename + "]";
+			sender.sendMessage(ChatColor.GOLD + prefix + " ダウンロードが終了しました。");
+			sender.sendMessage(ChatColor.GOLD + prefix + " ファイルサイズ: " + getSize(file.length()));
+			sender.sendMessage(ChatColor.GOLD + prefix + " 保存場所: plugins/" + getPluginName() + "/Downloads/" + filename);
 		}
 	}
 
@@ -158,11 +213,11 @@ public class Updater implements Listener {
 	}
 
 	private void updateCheck() {
-		if(CustomChatConfig.getBoolean("UpdateChecker")) {
-			if((!getVersion().equals(getCurrentVersion())) && (Double.parseDouble(getVersion()) > Double.parseDouble(getCurrentVersion()))) {
+		if(Config.getBoolean("UpdateChecker")) {
+			if(Double.parseDouble(getVersion()) > Double.parseDouble(getCurrentVersion())) {
 				enable = true;
-				if(CustomChatConfig.getBoolean("AutoDownload")) {
-					download();
+				if(Config.getBoolean("AutoDownload")) {
+					fileDownload();
 				}
 			} else {
 				enable = false;
@@ -170,31 +225,27 @@ public class Updater implements Listener {
 		}
 	}
 
-	private void sendCheckMessage() {
-		if(enable && !error && getPluginURL() != null) {
-			Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "最新のバージョンが存在します。v" + getVersion() + "にアップデートしてください。");
-			Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "アップデート内容: " + getContent());
-			Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "URL: " + getPluginURL());
-		}
-	}
-
-	private void sendCheckMessage(Player player) {
-		if(enable && !error && getPluginURL() != null) {
-			if(!player.isOp()) {
-				return;
+	private void sendCheckMessage(Player player, boolean console) {
+		if(getEnable() && !getError() && getPluginURL() != null) {
+			if (console) {
+				sender.sendMessage(ChatColor.GREEN + "最新のバージョンが存在します。v" + getVersion() + "にアップデートしてください。");
+				sender.sendMessage(ChatColor.GREEN + "アップデート内容: " + getContent());
+			} else {
+				if(!player.isOp()) {
+					return;
+				}
+				player.sendMessage(ChatColor.GREEN + "最新のバージョンが存在します。v" + getVersion() + "にアップデートしてください。");
+				player.sendMessage(ChatColor.GREEN + "アップデート内容: " + getContent());
 			}
-			player.sendMessage(ChatColor.GREEN + "最新のバージョンが存在します。v" + getVersion() + "にアップデートしてください。");
-			player.sendMessage(ChatColor.GREEN + "アップデート内容: " + getContent());
-			player.sendMessage(ChatColor.GREEN + "URL: " + getPluginURL());
 		}
 	}
 
 	private void errorMessageTemplate() {
-		if(!error) {
+		if(!getError()) {
 			error = true;
 			sender.sendMessage(ChatColor.RED + "プラグイン名: " + getPluginName());
 			sender.sendMessage(ChatColor.RED + "バージョン: v" + getVersion());
-			sender.sendMessage(ChatColor.RED + "ダウンロードページ: " + "http://versionview.yuttyann44581.net/" + getPluginName() + "/");
+			sender.sendMessage(ChatColor.RED + "取得ページ: " + getSiteURL());
 			sender.sendMessage(ChatColor.RED + "連絡用ページ: http://file.yuttyann44581.net/contact/");
 			sender.sendMessage(ChatColor.RED + "時間が経っても解決しない場合は、製作者に連絡してください。");
 		}
@@ -202,6 +253,6 @@ public class Updater implements Listener {
 
 	@EventHandler(priority = EventPriority.NORMAL)
 	private void onPlayerJoin(PlayerJoinEvent event) {
-		sendCheckMessage(event.getPlayer());
+		sendCheckMessage(event.getPlayer(), false);
 	}
 }

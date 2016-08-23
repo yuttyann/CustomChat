@@ -1,10 +1,10 @@
 package com.github.yuttyann.customchat;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public enum Permission {
-	CUSTOMCHAT_RELOAD("customchat.reload");
+	CUSTOMCHAT_RELOAD("customchat.reload"),
+	CUSTOMCHAT_JAPANIZE("customchat.japanize");
 
 	private String node;
 
@@ -16,11 +16,15 @@ public enum Permission {
 		return node;
 	}
 
-	public static Boolean has(Permission permission, CommandSender sender) {
-		return sender.hasPermission(permission.getNode());
+	public static String getPermission(Permission permission) {
+		return permission.getNode();
 	}
 
-	public static Boolean has(Permission permission, Player player) {
-		return player.hasPermission(permission.getNode());
+	public static Boolean has(Permission permission, CommandSender sender) {
+		return sender.hasPermission(getPermission(permission));
+	}
+
+	public static Boolean has(String permission, CommandSender sender) {
+		return sender.hasPermission(permission);
 	}
 }

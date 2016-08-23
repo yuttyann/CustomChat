@@ -1,11 +1,13 @@
 name: CustomChat
 main: com.github.yuttyann.customchat.Main
-version: 1.5
+version: 1.7
 softdepend: [Vault, PermissionsEx]
 author: yuttyann44581
 website: http://ch.nicovideo.jp/yuttyann44581/blomaga/ar810622
 
 commands:
   customchat:
-    description: Config再読み込みコマンド
-    usage: /<command> reload - Configの再読み込みをします。
+    description: CustomChat コンフィグ、日本語化 関係コマンド
+    usage: |
+           /<command> reload - Configの再読み込みをします。
+           /<command> japanize <on | off> - チャットの日本語化を設定します。

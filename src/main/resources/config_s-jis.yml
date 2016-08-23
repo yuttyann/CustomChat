@@ -1,62 +1,83 @@
-#CustomChat v1.6 Config
-#CompliantVersion 1.7.2～1.9.4
-#ColorCodeList http://ess.khhq.net/mc/
+# CustomChat v1.7 Config
+# CompliantVersion 1.7.2～1.10
+# ColorCodeList http://ess.khhq.net/mc/
 
-#バージョンチェック、ダウンロード
-#このプラグインが最新バージョンかチェックします。
-#メッセージはOPにしか表示されません。
-# trueで有効 falseで無効
+## === 自動アップデートの設定 === ##
+# [true で有効 | false で無効]
+# 初期: true
+# このプラグインが最新バージョンかチェックします。
+# メッセージはOPにしか表示されません。
 UpdateChecker: true
 AutoDownload: true
 
-#チャットに使用するカラーコードの設定
-# trueで有効 falseで無効
+## === カラーコードの設定 === ##
+# [true で有効 | false で無効]
+# 初期: true
+# チャットに使用するカラーコードの設定です。
 ChatColorCode:
   Enable: true
   ColorCode: '&'
 
-#NGワードの設定
-#NGワードはngword_s-jis.yml、ngword_utf-8.ymlで設定できます。
-#&で色を指定できます。ColorCodeListのURL参照
+## === 日本語化の設定 === ##
+#DefaultJapanizeの設定
+# [true で有効 | false で無効]
+# 初期: true
+# プレイヤーのデフォルト設定で日本語化を有効にするか。
+# ログイン時に日本語化設定が無い場合にデフォルト設定が適用されます。
+#JapanizeTypeの設定
+# kana でローマ字変換
+# kanzi でローマ字変換⇒漢字変換
+#JapanizeFormatの設定
+# & でカラーコードを使用できます。
+# %japanize で日本語化チャットを取得できます。
+DefaultJapanize: true
+JapanizeType: kana
+JapanizeFormat: '&7(%japanize)&r'
+
+## === NGワードの設定 === ##
+# [true で有効 | false で無効]
+# 初期: true
 #MessageTypeの設定
-#broadcastでサーバー全体にメッセージを送信します。
-#sendでNGワードに引っかかったプレイヤーにメッセージを送信します。
+# broadcast サーバー全体にメッセージを送信します。
+# send NGワードに引っかかったプレイヤーにメッセージを送信します。
 #NGMessageの設定
-#%prefixでPermissionsExのPrefixを取得します。
-#%suffixでPermissionsExのSuffixを取得します。
-#%playerでプレイヤーを取得します。
-#%worldでワールドを取得します。
-#%messageでプレイヤーのチャットを取得します。
-# trueで有効 falseで無効
+# & でカラーコードを使用できます。
+# %prefix でPrefixを取得します。
+# %suffix でSuffixを取得します。
+# %player でプレイヤーを取得します。
+# %world でワールドを取得します。
+# %message でプレイヤーのチャットを取得します。
 NGword:
   Enable: true
   MessageType: send
   NGMessage: '&cNGワードが含まれています'
 
-#チャットグループの設定 
-#ChatGroups:
-#  (グループ名): <チャットメッセージ>
-#&で色を指定できます。ColorCodeListのURL参照
-#%prefixでPermissionsExのPrefixを取得します。
-#%suffixでPermissionsExのSuffixを取得します。
-#%timeで現在の時刻を取得します。
-#%playerでプレイヤーを取得します。
-#%worldでワールドを取得します。
-#%messageでプレイヤーのチャットを取得します。
-#%japanizeでローマ字を日本語化します。
-#設定は追加できます
+## === チャットグループの設定 === ##
+#----------- 設定 -------------
+# <グループ名>: <チャット>
+#-----------------------------
+# & でカラーコードを使用できます。
+# %time で現在の時刻を取得します。
+# %prefix でPrefixを取得します。
+# %suffix でSuffixを取得します。
+# %player でプレイヤーを取得します。
+# %world でワールドを取得します。
+# %message でプレイヤーのチャットを取得します。
+# %addjapanize でJapanizeFormatの設定を取得します。
 ChatGroups:
-  Admin: '&4[Admin]&b%player: &f%message &7(%japanize)'
+  Admin: '&4[Admin]&b%player: &f%message %addjapanize'
   Default: '<%player> %message'
 
-#通常プレイヤーの設定
-#NormalPlayers: <グループ名>
+## === プレイヤーの設定 === ##
+#----------- 設定 -------------
+# 通常プレイヤー:
+# NormalPlayer: <チャットグループ>
+# #指定したプレイヤー:
+# Players:
+#   <UUID>:
+#     Groups: <チャットグループ>
+#-----------------------------
 NormalPlayers: Default
-
-#指定したプレイヤーの設定
-#Players:
-#  (プレイヤーID):
-#    Group: <グループ名> 
 Players:
-  testplayer:
+  6a0f004c-682f-4e35-9d89-faa21b4d2c29:
     Group: Admin

@@ -37,14 +37,8 @@ public class PlayerData {
 	}
 
 	public static void load(Main plugin, Player player) {
-		if (Utils.isLinux() || Utils.isMac()) {
-			new PlayerData(plugin, player, "utf-8");
-		} else if (Utils.isWindows()) {
-			if(Utils.isUpperVersion("1.9")) {
-				new PlayerData(plugin, player, "utf-8");
-			} else {
-				new PlayerData(plugin, player, "s-jis");
-			}
+		if (Utils.isWindows() && !Utils.isUpperVersion("1.9")) {
+			new PlayerData(plugin, player, "s-jis");
 		} else {
 			new PlayerData(plugin, player, "utf-8");
 		}

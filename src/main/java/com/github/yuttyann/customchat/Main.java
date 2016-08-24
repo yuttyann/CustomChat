@@ -52,17 +52,9 @@ public class Main extends JavaPlugin {
 	}
 
 	private void setUpFile() {
-		if (Utils.isLinux() || Utils.isMac()) {
-			new Config(this, "utf-8");
-			new NGword(this, "utf-8");
-		} else if (Utils.isWindows()) {
-			if(Utils.isUpperVersion("1.9")) {
-				new Config(this, "utf-8");
-				new NGword(this, "utf-8");
-			} else {
-				new Config(this, "s-jis");
-				new NGword(this, "s-jis");
-			}
+		if (Utils.isWindows() && !Utils.isUpperVersion("1.9")) {
+			new Config(this, "s-jis");
+			new NGword(this, "s-jis");
 		} else {
 			new Config(this, "utf-8");
 			new NGword(this, "utf-8");
